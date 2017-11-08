@@ -58,9 +58,13 @@ class GeneralSection extends BaseSection {
 				<div class="title">Functionality</div>
                 <div class="settings-card">
 					<div class="setting-row" id="startAtLogin-option">
-						<div class="setting-description">Start app at login</div>
+						<div class="setting-description">Start automatically on system startup</div>
 						<div class="setting-control"></div>
 					</div>
+					<div class="setting-row" id="hiddenAtLogin-option">
+					<div class="setting-description">Always start minimized</div>
+					<div class="setting-control"></div>
+				</div>
 					<div class="setting-row" id="enable-spellchecker-option">
 					<div class="setting-description">Enable Spellchecker (requires restart)</div>
 					<div class="setting-control"></div>
@@ -86,6 +90,7 @@ class GeneralSection extends BaseSection {
 		this.updateUpdateOption();
 		this.updateSidebarOption();
 		this.updateStartAtLoginOption();
+		this.updateStartHiddenAtLoginOption();
 		this.updateResetDataOption();
 		this.showDesktopNotification();
 		this.enableSpellchecker();
@@ -193,6 +198,18 @@ class GeneralSection extends BaseSection {
 				ConfigUtil.setConfigItem('startAtLogin', newValue);
 				ipcRenderer.send('toggleAutoLauncher', newValue);
 				this.updateStartAtLoginOption();
+			}
+		});
+	}
+
+	updateStartHiddenAtLoginOption() {
+		this.generateSettingOption({
+			$element: document.querySelector('#hiddenAtLogin-option .setting-control'),
+			value: ConfigUtil.getConfigItem('hiddenAtLogin', false),
+			clickHandler: () => {
+				const newValue = !ConfigUtil.getConfigItem('hiddenAtLogin');
+				ConfigUtil.setConfigItem('hiddenAtLogin', newValue);
+				this.updateStartHiddenAtLoginOption();
 			}
 		});
 	}
