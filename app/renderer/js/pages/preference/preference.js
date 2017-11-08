@@ -50,6 +50,7 @@ class PreferenceView extends BaseComponent {
 			showSidebar: true,
 			badgeOption: true,
 			startAtLogin: false,
+			hiddenAtLogin: false,
 			enableSpellchecker: true,
 			showNotification: true,
 			betaUpdate: false,

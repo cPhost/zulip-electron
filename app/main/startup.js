@@ -9,17 +9,17 @@ const setAutoLaunch = AutoLaunchValue => {
 	if (isDev) {
 		return;
 	}
-
 	// On Mac, work around a bug in auto-launch where it opens a Terminal window
 	// See https://github.com/Teamwork/node-auto-launch/issues/28#issuecomment-222194437
-
 	const appPath = process.platform === 'darwin' ? app.getPath('exe').replace(/\.app\/Content.*/, '.app') : undefined; // Use the default
 
 	const ZulipAutoLauncher = new AutoLaunch({
 		name: 'Zulip',
 		path: appPath,
-		isHidden: false
+		// Start app in background
+		isHidden: ConfigUtil.getConfigItem('hiddenAtLogin')
 	});
+
 	const autoLaunchOption = ConfigUtil.getConfigItem('startAtLogin', AutoLaunchValue);
 
 	if (autoLaunchOption) {
