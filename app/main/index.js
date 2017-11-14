@@ -1,7 +1,6 @@
 'use strict';
 const path = require('path');
 const electron = require('electron');
-const electronLocalshortcut = require('electron-localshortcut');
 const windowStateKeeper = require('electron-window-state');
 const appMenu = require('./menu');
 const { appUpdater } = require('./autoupdater');
@@ -9,7 +8,7 @@ const { crashHandler } = require('./crash-reporter');
 
 const { setAutoLaunch } = require('./startup');
 
-const { app, ipcMain } = electron;
+const { app, ipcMain, globalShortcut } = electron;
 
 const BadgeSettings = require('./../renderer/js/pages/preference/badge-settings.js');
 
@@ -96,7 +95,7 @@ function createMainWindow() {
 		}
 
 		// Unregister all the shortcuts so that they don't interfare with other apps
-		electronLocalshortcut.unregisterAll(mainWindow);
+		globalShortcut.unregisterAll();
 	});
 
 	win.setTitle('Zulip');
@@ -116,6 +115,16 @@ function createMainWindow() {
 		}
 	});
 
+	win.on('focus', () => {
+		console.log('focus');
+		registerLocalShortcuts(win.webContents);
+	});
+
+	win.on('blur', () => {
+		console.log('blur');
+		unregisterLocalShortcuts();
+	});
+
 	// Let us register listeners on the window, so we can update the state
 	// automatically (the listeners will be removed when the window is closed)
 	// and restore the maximized or full screen state
@@ -126,18 +135,24 @@ function createMainWindow() {
 
 function registerLocalShortcuts(page) {
 	// Somehow, reload action cannot be overwritten by the menu item
-	electronLocalshortcut.register(mainWindow, 'CommandOrControl+R', () => {
+	globalShortcut.register('CommandOrControl+R', () => {
 		page.send('reload-current-viewer');
+		console.log('cmd+r pressed');
 	});
 
 	// Also adding these shortcuts because some users might want to use it instead of CMD/Left-Right
-	electronLocalshortcut.register(mainWindow, 'CommandOrControl+[', () => {
+	globalShortcut.register('CommandOrControl+[', () => {
 		page.send('back');
+		console.log('cmd[ pressed back');
 	});
 
-	electronLocalshortcut.register(mainWindow, 'CommandOrControl+]', () => {
+	globalShortcut.register('CommandOrControl+]', () => {
 		page.send('forward');
 	});
+}
+
+function unregisterLocalShortcuts() {
+	globalShortcut.unregisterAll();
 }
 
 // eslint-disable-next-line max-params
@@ -148,7 +163,7 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
 
 app.on('window-all-closed', () => {
 	// Unregister all the shortcuts so that they don't interfare with other apps
-	electronLocalshortcut.unregisterAll(mainWindow);
+	globalShortcut.unregisterAll();
 });
 
 app.on('activate', () => {
@@ -232,7 +247,7 @@ app.on('ready', () => {
 	});
 
 	ipcMain.on('register-server-tab-shortcut', (event, index) => {
-		electronLocalshortcut.register(mainWindow, `CommandOrControl+${index}`, () => {
+		globalShortcut.register(`CommandOrControl+${index}`, () => {
 			// Array index == Shown index - 1
 			page.send('switch-server-tab', index - 1);
 		});
@@ -242,7 +257,7 @@ app.on('ready', () => {
 		if (enable) {
 			registerLocalShortcuts(page);
 		} else {
-			electronLocalshortcut.unregisterAll(mainWindow);
+			globalShortcut.unregisterAll();
 		}
 	});
 
@@ -253,7 +268,7 @@ app.on('ready', () => {
 
 app.on('will-quit', () => {
 	// Unregister all the shortcuts so that they don't interfare with other apps
-	electronLocalshortcut.unregisterAll(mainWindow);
+	globalShortcut.unregisterAll();
 });
 
 app.on('before-quit', () => {
