@@ -26,7 +26,8 @@ let badgeCount;
 let isQuitting = false;
 
 // Load this url in main window
-const mainURL = 'file://' + path.join(__dirname, '../renderer', 'main.html');
+// const mainURL = 'file://' + path.join(__dirname, '../renderer', 'main.html');
+const mainURL = 'file://' + path.join(__dirname, '../test', 'index.html');
 
 const isAlreadyRunning = app.makeSingleInstance(() => {
 	if (mainWindow) {

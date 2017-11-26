@@ -36,4 +36,11 @@ gulp.task('test-e2e', () => {
 	}));
 });
 
-gulp.task('default', ['dev', 'test-e2e']);
+gulp.task('unit-test', () => {
+	return gulp.src('tests/unit-test.js')
+	.pipe(tape({
+		reporter: tapColorize()
+	}));
+});
+
+gulp.task('default', ['dev', 'test-e2e', 'unit-test']);

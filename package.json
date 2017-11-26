@@ -24,6 +24,7 @@
     "postinstall": "electron-builder install-app-deps",
     "test": "xo",
     "test-e2e": "gulp test-e2e",
+    "unit-test": "gulp unit-test",
     "dev": "gulp dev",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
@@ -105,12 +106,13 @@
     "InstantMessaging"
   ],
   "devDependencies": {
-    "assert": "1.4.1",
+    "assert": "^1.4.1",
     "cp-file": "^5.0.0",
     "devtron": "1.4.0",
-    "electron-builder": "19.45.5",
     "electron": "1.6.15",
+    "electron-builder": "19.45.5",
     "electron-connect": "0.6.2",
+    "electron-debug": "1.4.0",
     "gulp": "3.9.1",
     "gulp-tape": "0.0.9",
     "is-ci": "^1.0.10",
@@ -118,8 +120,7 @@
     "spectron": "3.7.2",
     "tap-colorize": "^1.2.0",
     "tape": "^4.8.0",
-    "xo": "0.18.2",
-    "electron-debug": "1.4.0"
+    "xo": "0.18.2"
   },
   "xo": {
     "parserOptions": {
