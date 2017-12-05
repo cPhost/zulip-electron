@@ -1,7 +1,7 @@
 {
   "name": "zulip",
   "productName": "Zulip",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "main": "./app/main",
   "description": "Zulip Desktop App",
   "license": "Apache-2.0",
@@ -28,6 +28,7 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "mas": "electron-builder --mac mas",
+    "publish": "build --linux deb -p always",
     "travis": "cd ./scripts && ./travis-build-test.sh"
   },
   "pre-commit": [
@@ -58,7 +59,8 @@
     },
     "deb": {
       "synopsis": "Zulip Desktop App",
-      "afterInstall": "./scripts/debian-add-repo.sh"
+      "afterInstall": "./scripts/debian-add-repo.sh",
+      "afterRemove": "./scripts/debain-remove-repo.sh"
     },
     "dmg": {
       "background": "build/appdmg.png",

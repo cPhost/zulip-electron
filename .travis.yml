@@ -1,9 +1,9 @@
-sudo: required
-dist: trusty
+language: node_js
+node_js: "8"
 
-os:
-- osx
-- linux
+os: 
+  - osx
+  - linux
 
 addons:
   apt:
@@ -13,25 +13,19 @@ addons:
     - libxtst-dev
     - libxkbfile-dev
 
-language: node_js
-node_js:
-- '6'
-
-before_install:
-  - ./scripts/travis-xvfb.sh
-  - npm install -g gulp
-  - npm install
+osx_image: xcode9.1
+before_cache:
+  - rm -rf $HOME/.cache/electron-builder/wine
 
 cache:
   directories:
   - node_modules
-  - app/node_modules
+  - $HOME/.cache/electron
+  - $HOME/.cache/electron-builder
 
 script:
-- npm run travis
-notifications:
-  webhooks:
-    urls:
-      - https://zulip.org/zulipbot/travis
-    on_success: always
-    on_failure: always
+  - npm run publish
+
+branches:
+  only: 
+    - get-deb
