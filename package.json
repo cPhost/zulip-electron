@@ -42,7 +42,8 @@
     ],
     "copyright": "©2017 Kandra Labs, Inc.",
     "mac": {
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.productivity",
+      "asarUnpack": "./app/node_modules/node-notifier/vendor/**"
     },
     "linux": {
       "category": "Chat;GNOME;GTK;Network;InstantMessaging",
@@ -53,7 +54,8 @@
         "zip",
         "AppImage"
       ],
-      "maintainer": "Akash Nimare <svnitakash@gmail.com>"
+      "maintainer": "Akash Nimare <svnitakash@gmail.com>",
+      "asarUnpack": "./app/node_modules/node-notifier/vendor/**"
     },
     "deb": {
       "synopsis": "Zulip Desktop App",
@@ -89,7 +91,8 @@
         }
       ],
       "icon": "build/icon.ico",
-      "publisherName": "Kandra Labs, Inc."
+      "publisherName": "Kandra Labs, Inc.",
+      "asarUnpack": "./app/node_modules/node-notifier/vendor/**"
     },
     "nsis": {
       "perMachine": true,
