@@ -20,6 +20,7 @@ class WebView extends BaseComponent {
 
 		this.zoomFactor = 1.0;
 		this.loading = false;
+		this.webviewLoaded = false;
 		this.badgeCount = 0;
 	}
 
@@ -30,6 +31,7 @@ class WebView extends BaseComponent {
 					src="${this.props.url}"
 					${this.props.nodeIntegration ? 'nodeIntegration' : ''}
 					disablewebsecurity
+					autosize
 					${this.props.preload ? 'preload="js/preload.js"' : ''}
 					partition="persist:webviewsession"
 					webpreferences="allowRunningInsecureContent, javascript=yes">
@@ -92,9 +94,7 @@ class WebView extends BaseComponent {
 		});
 
 		this.$el.addEventListener('dom-ready', () => {
-			if (this.props.role === 'server') {
-				this.$el.classList.add('onload');
-			}
+			this.webviewLoaded = true;
 			this.show();
 		});
 
@@ -128,10 +128,15 @@ class WebView extends BaseComponent {
 			return;
 		}
 
+		this.$el.classList.add('loaded');
+		if (this.webviewLoaded) {
+			this.$el.classList.add('not-loading');
+		}
+
 		this.$el.classList.remove('disabled');
 		setTimeout(() => {
 			if (this.props.role === 'server') {
-				this.$el.classList.remove('onload');
+				this.$el.classList.remove('not-loading');
 			}
 		}, 1000);
 		this.focus();

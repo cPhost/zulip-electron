@@ -13,7 +13,7 @@ body {
 #content {
     display: flex;
     height: 100%;
-    background: #fff url(../img/ic_loading.gif) no-repeat;
+    background: palevioletred url(../img/ic_loading.gif) no-repeat;
     background-size: 60px 60px;
     background-position: center;
 }
@@ -228,27 +228,34 @@ body {
   *******************/
 
 #webviews-container {
-    display: flex;
+    display: block;
     height: 100%;
     width: 100%;
 }
 
 webview {
     opacity: 1;
-    transition: opacity 0.3s ease-in;
-    flex-grow: 1;
+    width: 100%;
+    height: 100%;
 }
 
-webview.onload {
-    transition: opacity 1s cubic-bezier(0.95, 0.05, 0.795, 0.035);
+webview:not(.not-loading) {
+    transition: opacity 0.3s ease-in;
+}
+
+/* inital loadup animation eased out */
+webview.loaded {
+    transition: all 1s ease-in-out;
 }
 
 webview.disabled {
-    flex: 0 1;
-    height: 0;
-    width: 0;
+    position: absolute;
+    visibility: hidden;
     opacity: 0;
-    transition: opacity 0.3s ease-out;
+}
+
+webview.disable:not(.not-loading) {
+    transition: all 0.3s ease-out;
 }
 
 webview:focus {
