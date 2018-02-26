@@ -13,6 +13,11 @@ addons:
     - libxtst-dev
     - libxkbfile-dev
 
+  artifacts:
+    paths:
+      - ./dist
+
+
 language: node_js
 node_js:
 - '6'
