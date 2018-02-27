@@ -29,6 +29,10 @@ cache:
 
 script:
 - npm run travis
+# publish only if test passes
+# this will only work if GH_TOKEN is set
+- electron-builder --publish always
+
 notifications:
   webhooks:
     urls:
