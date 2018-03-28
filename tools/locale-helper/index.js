@@ -24,6 +24,16 @@ for (let locale in supportedLocales) {
                translationJSON[phrase] = translatedText[index];
             });
 
+            let customLocale;
+            try {
+              require(`./custom-locales/${locale}`);
+            } catch {};
+
+            // strictly check for object to avoid curropted values.
+            if (typeof locale === 'object') {
+              translationJSON = Object.assign(translationJSON, customLocale);
+            }
+
             writeJSON(localeFile, translationJSON);
             console.log(`create: ${localeFile}`);
         });
