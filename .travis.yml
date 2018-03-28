@@ -1,11 +1,26 @@
-sudo: required
-dist: trusty
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode9.2
+      language: node_js
+      node_js: "6"
+      env:
+        - ELECTRON_CACHE=$HOME/.cache/electron
+        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 
-os:
-  - osx
-  - linux
+    - os: linux
+      services: docker
+      language: node_js
+      node_js: "7"
 
-osx_image: xcode9.0
+before_cache:
+  - rm -rf $HOME/.cache/electron-builder/wine
+
+cache:
+  directories:
+    - node_modules
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
 
 addons:
   apt:
@@ -14,8 +29,7 @@ addons:
       - libxext-dev
       - libxtst-dev
       - libxkbfile-dev
-      - g++-multilib
-      - libxss-dev:i386
+
   artifacts:
     paths:
       - $(ls ./dist/*.AppImage | tr "\n" ":")
@@ -30,14 +44,8 @@ addons:
       - $(ls ./dist/mac/*.yml | tr "\n" ":")
       - $(ls ./dist/linux/*.yml | tr "\n" ":")
 
-language: node_js
-node_js:
-- '6'
-
 before_install:
   - ./scripts/travis-xvfb.sh
-  - npm install -g gulp
-  - npm install
 
 cache:
   directories:
@@ -47,13 +55,32 @@ cache:
 
 script:
   - npm run travis
-  - chmod +x ./scripts/install-release-dependencies.sh
-  - ./scripts/install-release-dependencies.sh
-  - electron-builder --x64 --ia32
+  - |
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      docker run --rm \
+        --env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS|APPVEYOR_|CSC_|_TOKEN|_KEY|AWS_|STRIP|BUILD_') \
+        -v ${PWD}:/project \
+        -v ~/.cache/electron:/root/.cache/electron \
+        -v ~/.cache/electron-builder:/root/.cache/electron-builder \
+        electronuserland/builder:wine \
+        /bin/bash -c "./node_modules/.bin/electron-builder --x64 --ia32 --win"
+
+        docker run --rm \
+        --env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS|APPVEYOR_|CSC_|_TOKEN|_KEY|AWS_|STRIP|BUILD_') \
+        -v ${PWD}:/project \
+        -v ~/.cache/electron:/root/.cache/electron \
+        -v ~/.cache/electron-builder:/root/.cache/electron-builder \
+        electronuserland/builder:base \
+        /bin/bash -c "./node_modules/.bin/electron-builder --x64 --ia32 --linux"
+    else
+      npm run dist
+    fi
+
   - node ./scripts/prepare-artifacts.js
+
   # log out /dist files might be useful to know
   # what files are uploaded
-  - ls dist
+  - ls -R dist
 
 notifications:
   webhooks:
