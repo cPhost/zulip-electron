@@ -60,6 +60,7 @@ class ServerManagerView {
 		this.loadProxy().then(() => {
 			this.initDefaultSettings();
 			this.initSidebar();
+			this.initPresetOrgs();
 			this.initTabs();
 			this.initActions();
 			this.registerIpcs();
@@ -157,6 +158,37 @@ class ServerManagerView {
 	initSidebar() {
 		const showSidebar = ConfigUtil.getConfigItem('showSidebar', true);
 		this.toggleSidebar(showSidebar);
+	}
+
+	queueDomain(domain) {
+		return new Promise(async resolve => {
+			try {
+				const serverConf = await DomainUtil.checkDomain(domain, {override: true});
+				await DomainUtil.addDomain(serverConf);
+				resolve(true);
+			} catch (err) {
+				logger.error(err);
+				logger.error('Could not add ' + domain + '. Please contact your system administrator.');
+				resolve(false);
+			}
+		});
+	}
+
+	async initPresetOrgs() {
+		const presetOrgs = EnterpriseUtil.getConfigItem('presetOrganizations', []);
+		// set to true if at least one new domain is added
+		const domainPromises = [];
+		for (const url in presetOrgs) {
+			if (DomainUtil.duplicateDomain(presetOrgs[url])) {
+				continue;
+			}
+			domainPromises.push(this.queueDomain(presetOrgs[url]));
+		}
+		const domainsAdded = await Promise.all(domainPromises);
+		if (domainsAdded.includes(true)) {
+			// at least one domain was resolved
+			ipcRenderer.send('reload-full-app');
+		}
 	}
 
 	initTabs() {
