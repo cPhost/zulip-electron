@@ -1,0 +1,43 @@
+name: Zulip Desktop CI
+
+on: [push]
+
+jobs:
+  tests:
+    name: Zulip Desktop Tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest] #, windows-latest, macos]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12
+#     - name: Run Tests
+#       run: |
+#         npm ci
+#         npm run test
+#       env:
+#         CI: true
+#     - name: Cache Dependencies
+#       id: npm-cache
+#       run: |
+#         echo "::set-output name=dir::$(npm config get cache)"
+#     - uses: actions/cache@v1
+#       with:
+#         path: ${{ steps.npm-cache.outputs.dir }}
+#         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#         restore-keys: |
+#           cache-${{ runner.os }}
+    - name: Build Release Artifacts
+      run: |
+        npm run dist
+      env:
+        CI: true
+    - name: Release Artifacts
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: release artifacts
+        path: build      
