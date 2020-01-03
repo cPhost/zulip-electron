@@ -33,6 +33,7 @@ jobs:
 #           cache-${{ runner.os }}
     - name: Build Release Artifacts
       run: |
+        npm install
         npm run dist
       env:
         CI: true
