@@ -5,7 +5,7 @@ on: [push]
 jobs:
   windows-build:
     name: Windows Installers
-    runs-on: [windows-latest]
+    runs-on: [linux]
     env:
       CI: true
     steps:
