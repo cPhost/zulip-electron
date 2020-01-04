@@ -16,6 +16,16 @@ jobs:
         version: 12
     - name: Build Release Artifacts
       run: |
+        curl https://aka.ms/vs/16/release/vs_buildtools.exe -o buildtools.exe
+        C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache
+          --installPath C:\BuildTools
+          --all
+          --remove Microsoft.VisualStudio.Component.Windows10SDK.10240
+          --remove Microsoft.VisualStudio.Component.Windows10SDK.10586
+          --remove Microsoft.VisualStudio.Component.Windows10SDK.14393
+          --remove Microsoft.VisualStudio.Component.Windows81SDK
+        || IF "%ERRORLEVEL%"=="3010" EXIT 0
+
         npm install
         npm run dist
     - name: Release Artifacts
