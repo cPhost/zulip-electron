@@ -10,13 +10,10 @@ jobs:
       CI: true
     steps:
     - uses: actions/checkout@v1
-    - name: Setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12
+    - name: github-actions-nodejs
+      uses: thonatos/github-actions-nodejs@v0.1.1
     - name: Build Release Artifacts
       run: |
-        npm install -g windows-build-tools
         npm install
         npm run dist
     - name: Release Artifacts
